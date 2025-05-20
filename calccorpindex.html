@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tööriistade veebileht – Must-valge ja kaasaegne</title>
+<style>
+  /* Reset and base */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #000;
+    color: #eee;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+  nav {
+    width: 240px;
+    background: #121212;
+    display: flex;
+    flex-direction: column;
+    padding-top: 30px;
+    border-right: 1px solid #333;
+  }
+  nav button {
+    background: none;
+    border: none;
+    color: #ccc;
+    padding: 15px 24px;
+    text-align: left;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.25s, color 0.25s;
+    border-left: 5px solid transparent;
+    outline-offset: 2px;
+    font-weight: 500;
+  }
+  nav button:hover,
+  nav button:focus {
+    background: #fff;
+    color: #222;
+    outline: none;
+  }
+  nav button.active {
+    background: #fff;
+    color: #111;
+    border-left: 5px solid #f0a500;
+    font-weight: 700;
+  }
+  main {
+    flex-grow: 1;
+    padding: 30px 40px;
+    overflow-y: auto;
+    background: #000;
+    color: #eee;
+  }
+  h1, h2 {
+    margin-top: 0;
+    color: #f0a500;
+    font-weight: 700;
+  }
+  label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 6px;
+  }
+  input, select, button.calc-btn {
+    background: #111;
+    border: 1.5px solid #444;
+    color: #eee;
+    padding: 10px 14px;
+    font-size: 1rem;
+    border-radius: 6px;
+    transition: background 0.3s, border-color 0.3s, color 0.3s;
+    width: 100%;
+    font-weight: 500;
+  }
+  input:focus, select:focus {
+    background: #222;
+    border-color: #f0a500;
+    outline: none;
+    color: #f0a500;
+  }
+  button.calc-btn {
+    cursor: pointer;
+    user-select: none;
+    background: #222;
+    border: 2px solid #f0a500;
+    color: #f0a500;
+    border-radius: 6px;
+    font-weight: 700;
+    padding: 12px 18px;
+    margin-top: 20px;
+  }
+  button.calc-btn:hover,
+  button.calc-btn:focus {
+    background: #f0a500;
+    color: #000;
+    outline: none;
+  }
+  /* Calculator styles */
+  #calculator {
+    max-width: 340px;
+    margin-top: 20px;
+  }
+  #calc-display {
+    width: 100%;
+    height: 56px;
+    font-size: 1.8rem;
+    padding: 12px;
+    background: #111;
+    border: 1.5px solid #444;
+    border-radius: 8px;
+    color: #eee;
+    text-align: right;
+    margin-bottom: 12px;
+    user-select: none;
+  }
+  #calc-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  /* BMI Calculator styles */
+  #bmi-calculator {
+    max-width: 340px;
+    margin-top: 20px;
+  }
+  #bmi-result {
+    margin-top: 18px;
+    font-weight: 700;
+    color: #f0a500;
+  }
+  /* Unit converter styles */
+  #unit-converter {
+    margin-top: 20px;
+    max-width: 380px;
+  }
+  /* Currency converter styles */
+  #currency-converter {
+    margin-top: 20px;
+    max-width: 380px;
+  }
+  /* Stopwatch styles */
+  #stopwatch {
+    max-width: 320px;
+    margin-top: 20px;
+    text-align: center;
+  }
+  #stopwatch-display {
+    font-size: 3rem;
+    font-weight: 700;
+    background: #111;
+    border: 1.5px solid #f0a500;
+    border-radius: 10px;
+    padding: 16px 0;
+    user-select: none;
+    width: 100%;
+    margin-bottom: 18px;
+    letter-spacing: 0.15em;
+  }
+  #stopwatch button {
+    margin: 4px 8px;
+  }
+  /* Todo list styles */
+  #todo-list {
+    max-width: 360px;
+    margin-top: 20px;
+  }
+  #todo-input {
+    width: 100%;
+    margin-bottom: 12px;
+  }
+  #todo-tasks {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  #todo-tasks li {
+    background: #111;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    font-weight: 500;
+  }
+  #todo-tasks li > .task-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  #todo-tasks li button {
+    background: transparent;
+    border: none;
+    color: #f03030;
+    font-weight: 700;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+  #todo-tasks li button:hover {
+    color: #ff5555;
+  }
+  #todo-tasks li .task-date {
+    font-size: 0.85rem;
+    color: #888;
+    margin-top: 4px;
+    margin-left: 2px;
+    font-style: italic;
+  }
+
+  /* Scrollbar styling */
+  main::-webkit-scrollbar {
+    width: 10px;
+  }
+  main::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 6px;
+  }
+
+  /* Error message style */
+  .error-msg {
+    color: #ff4444;
+    margin-top: 12px;
+    font-weight: 700;
+  }
+  /* Success message style */
+  .success-msg {
+    color: #44ff44;
+    margin-top: 12px;
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+<nav role="navigation" aria-label="Peamenüü">
+  <button id="menu-calculator" class="active" aria-selected="true" aria-controls="calculator" role="tab" tabindex="0">Kalkulaator</button>
+  <button id="menu-bmi" aria-selected="false" aria-controls="bmi-calculator" role="tab" tabindex="-1">BMI kalkulaator</button>
+  <button id="menu-units" aria-selected="false" aria-controls="unit-converter" role="tab" tabindex="-1">Ühikute teisendamine</button>
+  <button id="menu-currency" aria-selected="false" aria-controls="currency-converter" role="tab" tabindex="-1">Rahaühikute teisendamine</button>  
+  <button id="menu-stopwatch" aria-selected="false" aria-controls="stopwatch" role="tab" tabindex="-1">Stopper / Taimer</button>
+  <button id="menu-todo" aria-selected="false" aria-controls="todo-list" role="tab" tabindex="-1">Meeldetuletused</button>
+</nav>
+<main>
+  <!-- Calculator -->
+  <section id="calculator" role="tabpanel" aria-labelledby="menu-calculator" tabindex="0">
+    <h1>Kalkulaator</h1>
+    <input id="calc-display" type="text" readonly aria-label="Kalkulaatori ekraan" value="0" />
+    <div id="calc-buttons" role="group" aria-label="Kalkulaatori nupud">
+      <button class="calc-btn" data-value="7">7</button>
+      <button class="calc-btn" data-value="8">8</button>
+      <button class="calc-btn" data-value="9">9</button>
+      <button class="calc-btn" data-value="/">÷</button>
+
+      <button class="calc-btn" data-value="4">4</button>
+      <button class="calc-btn" data-value="5">5</button>
+      <button class="calc-btn" data-value="6">6</button>
+      <button class="calc-btn" data-value="*">×</button>
+
+      <button class="calc-btn" data-value="1">1</button>
+      <button class="calc-btn" data-value="2">2</button>
+      <button class="calc-btn" data-value="3">3</button>
+      <button class="calc-btn" data-value="-">−</button>
+
+      <button class="calc-btn" data-value="0">0</button>
+      <button class="calc-btn" data-value=".">.</button>
+      <button class="calc-btn" id="calc-clear" data-value="C">C</button>
+      <button class="calc-btn" data-value="+">+</button>
+
+      <button class="calc-btn" id="calc-equals" data-value="=" style="grid-column: span 4;">=</button>
+    </div>
+  </section>
+
+  <!-- BMI Calculator -->
+  <section id="bmi-calculator" role="tabpanel" aria-labelledby="menu-bmi" tabindex="0" hidden>
+    <h1>BMI kalkulaator</h1>
+    <label for="height">Pikkus (cm):</label>
+    <input type="number" id="height" min="30" max="300" step="0.1" aria-describedby="heightHelp" />
+    <label for="weight">Kaal (kg):</label>
+    <input type="number" id="weight" min="2" max="500" step="0.1" />
+    <button id="bmi-calc-btn" class="calc-btn">Arvuta BMI</button>
+    <p id="bmi-result" aria-live="polite" aria-atomic="true"></p>
+  </section>
+
+  <!-- Unit Converter -->
+  <section id="unit-converter" role="tabpanel" aria-labelledby="menu-units" tabindex="0" hidden>
+    <h1>Ühikute teisendamine</h1>
+    <label for="unit-type">Vali ühik:</label>
+    <select id="unit-type" aria-describedby="unit-description">
+      <option value="length">Pikkus</option>
+      <option value="weight">Kaal</option>
+      <option value="temperature">Temperatuur</option>
+    </select>
+
+    <label for="unit-input">Sisesta väärtus:</label>
+    <input type="number" id="unit-input" step="any" />
+
+    <label for="unit-from">Alusühik:</label>
+    <select id="unit-from"></select>
+
+    <label for="unit-to">Teisenda ühikuks:</label>
+    <select id="unit-to"></select>
+
+    <button id="unit-convert-btn" class="calc-btn">Teisenda</button>
+    <p id="unit-result" aria-live="polite" aria-atomic="true"></p>
+  </section>
+
+  <!-- Currency Converter -->
+  <section id="currency-converter" role="tabpanel" aria-labelledby="menu-currency" tabindex="0" hidden>
+    <h1>Rahaühikute teisendamine</h1>
+    <label for="currency-amount">Summa:</label>
+    <input type="number" id="currency-amount" step="any" />
+
+    <label for="currency-from">Valuuta (algsumma):</label>
+    <select id="currency-from"></select>
+
+    <label for="currency-to">Valuuta (teisendatud summa):</label>
+    <select id="currency-to"></select>
+
+    <button id="currency-convert-btn" class="calc-btn">Teisenda</button>
+    <p id="currency-result" aria-live="polite" aria-atomic="true"></p>
+  </section>
+
+  <!-- Stopwatch / Timer -->
+  <section id="stopwatch" role="tabpanel" aria-labelledby="menu-stopwatch" tabindex="0" hidden>
+    <h1>Stopper / Taimer</h1>
+    <div id="stopwatch-display" aria-live="polite" aria-atomic="true">00:00:00.00</div>
+    <div>
+      <button id="start-stop-btn" class="calc-btn">Start</button>
+      <button id="pause-btn" class="calc-btn" disabled>Pause</button>
+      <button id="reset-btn" class="calc-btn" disabled>Reset</button>
+    </div>
+  </section>
+
+  <!-- Todo list -->
+  <section id="todo-list" role="tabpanel" aria-labelledby="menu-todo" tabindex="0" hidden>
+    <h1>Meeldetuletused</h1>
+    <label for="todo-input">Lisa uus ülesanne:</label>
+    <input id="todo-input" type="text" placeholder="Kirjuta ülesanne siia..." aria-label="Lisa ülesanne" />
+    <label for="todo-date">Tähtaeg:</label>
+    <input id="todo-date" type="date" aria-label="Tähtaeg" />
+    <button id="todo-add-btn" class="calc-btn">Lisa</button>
+    <ul id="todo-tasks" aria-live="polite" aria-atomic="true"></ul>
+  </section>
+</main>
+
+<script>
+(() => {
+  // Navigation menu switching
+  const menuButtons = document.querySelectorAll('nav button');
+  const panels = document.querySelectorAll('main section');
+
+  function activatePanel(index) {
+    menuButtons.forEach((btn, i) => {
+      if(i === index) {
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+        btn.setAttribute('tabindex', '0');
+        panels[i].hidden = false;
+        panels[i].focus();
+      } else {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
+        btn.setAttribute('tabindex', '-1');
+        panels[i].hidden = true;
+      }
+    });
+  }
+  menuButtons.forEach((btn, idx) => {
+    btn.addEventListener('click', () => activatePanel(idx));
+  });
+
+  // Calculator logic
+  const calcDisplay = document.getElementById('calc-display');
+  const calcButtons = document.querySelectorAll('#calc-buttons .calc-btn');
+  let calcExpression = '';
+
+  function updateCalcDisplay() {
+    calcDisplay.value = calcExpression || '0';
+  }
+
+  calcButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const val = btn.getAttribute('data-value');
+      if(val === 'C') {
+        calcExpression = '';
+        updateCalcDisplay();
+      } else if(val === '=') {
+        try {
+          if(/^[0-9+\-*/.() ]+$/.test(calcExpression)) {
+            let result = Function('"use strict";return (' + calcExpression + ')')();
+            result = Math.round((result + Number.EPSILON) * 100000000) / 100000000;
+            calcExpression = String(result);
+          } else {
+            calcExpression = 'Error';
+          }
+        } catch {
+          calcExpression = 'Error';
+        }
+        updateCalcDisplay();
+      } else {
+        if (val === '.') {
+          const parts = calcExpression.split(/[\+\-\*\/]/);
+          const last = parts[parts.length - 1];
+          if(last.includes('.')) return;
+          if(last === '') return;
+        }
+        if(calcExpression === 'Error') calcExpression = '';
+        calcExpression += val;
+        updateCalcDisplay();
+      }
+    });
+  });
+
+  // BMI calculator logic
+  const bmiBtn = document.getElementById('bmi-calc-btn');
+  const bmiResult = document.getElementById('bmi-result');
+  bmiBtn.addEventListener('click', () => {
+    const heightCm = parseFloat(document.getElementById('height').value);
+    const weightKg = parseFloat(document.getElementById('weight').value);
+    bmiResult.classList.remove('error-msg');
+    if (isNaN(heightCm) || isNaN(weightKg) || heightCm <= 0 || weightKg <= 0) {
+      bmiResult.textContent = 'Palun sisesta korrektne pikkus ja kaal.';
+      bmiResult.classList.add('error-msg');
+      return;
+    }
+    const heightM = heightCm / 100;
+    const bmi = weightKg / (heightM * heightM);
+    const bmiRounded = Math.round(bmi * 10) / 10;
+    let category = '';
+    if (bmi < 18.5) category = 'Alakaal';
+    else if (bmi < 25) category = 'Normaalkaal';
+    else if (bmi < 30) category = 'Ülekaal';
+    else category = 'Rasvumine';
+    bmiResult.textContent = `Sinu BMI on ${bmiRounded} (${category})`;
+  });
+
+  // Unit Converter logic
+  const unitTypes = {
+    length: {
+      units: {
+        km: 1000,
+        m: 1,
+        cm: 0.01,
+        mm: 0.001,
+        mi: 1609.344,
+        yd: 0.9144,
+        ft: 0.3048,
+        in: 0.0254,
+      },
+    },
+    weight: {
+      units: {
+        kg: 1,
+        g: 0.001,
+        mg: 0.000001,
+        lb: 0.45359237,
+        oz: 0.0283495,
+      },
+    },
+    temperature: {
+      units: ['C', 'F', 'K'],
+    }
+  };
+  const unitTypeSelect = document.getElementById('unit-type');
+  const unitFromSelect = document.getElementById('unit-from');
+  const unitToSelect = document.getElementById('unit-to');
+  const unitInput = document.getElementById('unit-input');
+  const unitResult = document.getElementById('unit-result');
+  const unitConvertBtn = document.getElementById('unit-convert-btn');
+
+  function populateUnitOptions() {
+    const selectedType = unitTypeSelect.value;
+    unitFromSelect.innerHTML = '';
+    unitToSelect.innerHTML = '';
+    if (selectedType === 'temperature') {
+      unitTypes.temperature.units.forEach(u => {
+        const optionFrom = document.createElement('option');
+        optionFrom.value = u;
+        optionFrom.textContent = u;
+        unitFromSelect.appendChild(optionFrom);
+        const optionTo = document.createElement('option');
+        optionTo.value = u;
+        optionTo.textContent = u;
+        unitToSelect.appendChild(optionTo);
+      });
+    } else {
+      const units = unitTypes[selectedType].units;
+      for (const key in units) {
+        if (units.hasOwnProperty(key)) {
+          const optionFrom = document.createElement('option');
+          optionFrom.value = key;
+          optionFrom.textContent = key;
+          unitFromSelect.appendChild(optionFrom);
+          const optionTo = document.createElement('option');
+          optionTo.value = key;
+          optionTo.textContent = key;
+          unitToSelect.appendChild(optionTo);
+        }
+      }
+    }
+  }
+  populateUnitOptions();
+  unitTypeSelect.addEventListener('change', () => {
+    populateUnitOptions();
+    unitResult.textContent = '';
+    unitInput.value = '';
+  });
+
+  function convertTemperature(value, fromUnit, toUnit) {
+    let valC;
+    switch(fromUnit) {
+      case 'C': valC = value; break;
+      case 'F': valC = (value - 32) * 5/9; break;
+      case 'K': valC = value - 273.15; break;
+      default: valC = value;
+    }
+    switch(toUnit) {
+      case 'C': return valC;
+      case 'F': return (valC * 9/5) + 32;
+      case 'K': return valC + 273.15;
+      default: return valC;
+    }
+  }
+
+  unitConvertBtn.addEventListener('click', () => {
+    const type = unitTypeSelect.value;
+    const from = unitFromSelect.value;
+    const to = unitToSelect.value;
+    const val = parseFloat(unitInput.value);
+    unitResult.classList.remove('error-msg');
+    if (isNaN(val)) {
+      unitResult.textContent = 'Palun sisesta arvväärtus.';
+      unitResult.classList.add('error-msg');
+      return;
+    }
+    if (from === to) {
+      unitResult.textContent = 'Valitud ühikud on samad.';
+      return;
+    }
+    let converted;
+    if (type === 'temperature') {
+      converted = convertTemperature(val, from, to);
+    } else {
+      const baseVal = val * unitTypes[type].units[from];
+      converted = baseVal / unitTypes[type].units[to];
+    }
+    const rounded = Math.round(converted * 100000) / 100000;
+    unitResult.textContent = `${val} ${from} = ${rounded} ${to}`;
+  });
+
+  // Currency Converter logic
+  const exchangeRates = {
+    EUR: 1,
+    USD: 1.10,
+    GBP: 0.88,
+    JPY: 147.72,
+    SEK: 11.14,
+    CHF: 0.98,
+    CNY: 7.56,
+  };
+  const currencyFrom = document.getElementById('currency-from');
+  const currencyTo = document.getElementById('currency-to');
+  const currencyAmount = document.getElementById('currency-amount');
+  const currencyResult = document.getElementById('currency-result');
+  const currencyConvertBtn = document.getElementById('currency-convert-btn');
+
+  function populateCurrencyOptions() {
+    currencyFrom.innerHTML = '';
+    currencyTo.innerHTML = '';
+    for (const code in exchangeRates) {
+      if (exchangeRates.hasOwnProperty(code)) {
+        const optionFrom = document.createElement('option');
+        optionFrom.value = code;
+        optionFrom.textContent = code;
+        currencyFrom.appendChild(optionFrom);
+
+        const optionTo = document.createElement('option');
+        optionTo.value = code;
+        optionTo.textContent = code;
+        currencyTo.appendChild(optionTo);
+      }
+    }
+    currencyFrom.value = 'EUR';
+    currencyTo.value = 'USD';
+  }
+  populateCurrencyOptions();
+
+  currencyConvertBtn.addEventListener('click', () => {
+    const amount = parseFloat(currencyAmount.value);
+    const from = currencyFrom.value;
+    const to = currencyTo.value;
+    currencyResult.classList.remove('error-msg');
+    if (isNaN(amount)) {
+      currencyResult.textContent = 'Palun sisesta summa.';
+      currencyResult.classList.add('error-msg');
+      return;
+    }
+    if (from === to) {
+      currencyResult.textContent = 'Valitud valuutad on samad.';
+      return;
+    }
+    const amountInEUR = amount / exchangeRates[from];
+    const converted = amountInEUR * exchangeRates[to];
+    const rounded = Math.round(converted * 100000) / 100000;
+    currencyResult.textContent = `${amount} ${from} = ${rounded} ${to}`;
+  });
+
+  // Stopwatch / Timer logic
+  const stopwatchDisplay = document.getElementById('stopwatch-display');
+  const startStopBtn = document.getElementById('start-stop-btn');
+  const pauseBtn = document.getElementById('pause-btn');
+  const resetBtn = document.getElementById('reset-btn');
+
+  let stopwatchInterval = null;
+  let elapsed = 0;
+  let running = false;
+  let lastTimestamp = 0;
+
+  function formatTime(ms) {
+    const totalHundredths = Math.floor(ms / 10);
+    const hundredths = totalHundredths % 100;
+    const totalSeconds = Math.floor(totalHundredths / 100);
+    const seconds = totalSeconds % 60;
+    const minutes = Math.floor(totalSeconds / 60);
+    return (
+      String(minutes).padStart(2, '0') + ':' +
+      String(seconds).padStart(2, '0') + '.' +
+      String(hundredths).padStart(2, '0')
+    );
+  }
+
+  function updateStopwatch(timestamp) {
+    if (!running) return;
+    if (!lastTimestamp) lastTimestamp = timestamp;
+    elapsed += timestamp - lastTimestamp;
+    lastTimestamp = timestamp;
+    stopwatchDisplay.textContent = formatTime(elapsed);
+    requestAnimationFrame(updateStopwatch);
+  }
+
+  startStopBtn.addEventListener('click', () => {
+    if (!running) {
+      running = true;
+      lastTimestamp = 0;
+      requestAnimationFrame(updateStopwatch);
+      startStopBtn.textContent = 'Stop';
+      pauseBtn.disabled = false;
+      resetBtn.disabled = false;
+    } else {
+      // Stop
+      running = false;
+      startStopBtn.textContent = 'Start';
+    }
+  });
+  pauseBtn.addEventListener('click', () => {
+    if (running) {
+      running = false;
+      startStopBtn.textContent = 'Start';
+    }
+  });
+  resetBtn.addEventListener('click', () => {
+    running = false;
+    elapsed = 0;
+    stopwatchDisplay.textContent = '00:00:00.00';
+    startStopBtn.textContent = 'Start';
+    pauseBtn.disabled = true;
+    resetBtn.disabled = true;
+  });
+
+  // Todo list logic with localStorage and dates
+  const todoInput = document.getElementById('todo-input');
+  const todoDateInput = document.getElementById('todo-date');
+  const todoAddBtn = document.getElementById('todo-add-btn');
+  const todoTasksList = document.getElementById('todo-tasks');
+  let todos = [];
+
+  function saveTodos() {
+    localStorage.setItem('todos_et_blackwhite', JSON.stringify(todos));
+  }
+  function loadTodos() {
+    const stored = localStorage.getItem('todos_et_blackwhite');
+    if (stored) {
+      todos = JSON.parse(stored);
+    } else {
+      todos = [];
+    }
+  }
+  function renderTodos() {
+    todoTasksList.innerHTML = '';
+    if (todos.length === 0) {
+      const li = document.createElement('li');
+      li.textContent = 'Meeldetuletuste nimekiri on tühi.';
+      li.style.fontStyle = 'italic';
+      li.style.color = '#666';
+      todoTasksList.appendChild(li);
+      return;
+    }
+    todos.forEach((taskObj, index) => {
+      const li = document.createElement('li');
+      const rowDiv = document.createElement('div');
+      rowDiv.className = "task-row";
+      const taskSpan = document.createElement('span');
+      taskSpan.textContent = taskObj.task;
+      rowDiv.appendChild(taskSpan);
+      const delBtn = document.createElement('button');
+      delBtn.setAttribute('aria-label', `Kustuta ülesanne: ${taskObj.task}`);
+      delBtn.innerHTML = '&times;';
+      delBtn.addEventListener('click', () => {
+        todos.splice(index,1);
+        saveTodos();
+        renderTodos();
+      });
+      rowDiv.appendChild(delBtn);
+      li.appendChild(rowDiv);
+
+      if (taskObj.date) {
+        const dateSpan = document.createElement('span');
+        dateSpan.className = 'task-date';
+        const d = new Date(taskObj.date);
+        if (!isNaN(d)) {
+          const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+          dateSpan.textContent = `Tähtaeg: ${d.toLocaleDateString('et-EE', options)}`;
+        } else {
+          dateSpan.textContent = `Tähtaeg: ${taskObj.date}`;
+        }
+        li.appendChild(dateSpan);
+      }
+      todoTasksList.appendChild(li);
+    });
+  }
+  todoAddBtn.addEventListener('click', () => {
+    const task = todoInput.value.trim();
+    const date = todoDateInput.value;
+    if (!task) return;
+    todos.push({task, date});
+    todoInput.value = '';
+    todoDateInput.value = '';
+    saveTodos();
+    renderTodos();
+  });
+  todoInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      todoAddBtn.click();
+    }
+  });
+  todoDateInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      todoAddBtn.click();
+    }
+  });
+
+  // Initialize todo list
+  loadTodos();
+  renderTodos();
+
+})();
+</script>
+</body>
+</html>
